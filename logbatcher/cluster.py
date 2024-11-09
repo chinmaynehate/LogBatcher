@@ -5,7 +5,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.cluster import DBSCAN
 from logbatcher.sample import group_samples_clustering, dpp_sample
 import random
-
+from hdbscan import HDBSCAN
 class Cluster:
     def __init__(self):
         self.logs = []
@@ -74,7 +74,7 @@ def vectorize(tokenized_logs):
 
 
 def cluster(vectorized_logs, eps=0.1):
-    cluster = DBSCAN(eps=eps, min_samples=5)
+    cluster = HDBSCAN(min_cluster_size=5, min_samples=5, metric='euclidean', cluster_selection_method='eom')
     cluster.fit(vectorized_logs)
     labels = cluster.labels_
     cluster_nums = max(labels) + 1

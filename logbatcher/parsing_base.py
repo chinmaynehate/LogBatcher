@@ -10,7 +10,7 @@ from logbatcher.matching import matches_template
 from logbatcher.util import verify_template
 
 
-def single_dataset_paring(dataset, contents, output_dir, parser, batch_size = 10, chunk_size = 2000 , sample_method = 'dpp', clustering_method = 'dbscan', data_type = '2k', debug=True):
+def single_dataset_paring(dataset, contents, output_dir, parser, batch_size = 10, chunk_size = 2000 , sample_method = 'dpp', clustering_method = 'hdbscan', data_type = '2k', debug=True):
 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -54,7 +54,7 @@ def single_dataset_paring(dataset, contents, output_dir, parser, batch_size = 10
         if len(log_chunk) == chunk_size or (len(log_chunk)!=0 and index == len(logs) - 1):
             # parsing start
             print(f'Parsing {len(log_chunk)} logs...') if debug else None
-            if clustering_method == 'dbscan':
+            if clustering_method == 'hdbscan':
                 # tokenize -> vectorize -> cluster -> reassign_clusters
                 tokenized_logs = [tokenize(log) for log in log_chunk]
                 labels, cluster_nums = cluster(vectorize(tokenized_logs))
