@@ -296,20 +296,22 @@ def display_summary_with_analysis(log_counts, log_details, total_logs, output_fi
     summary = "Log Level Summary:\n"
     summary += "-" * 30 + "\n"
 
-    for level, count in log_counts.items():
+    # Display top 5 log levels by count
+    for level, count in log_counts.most_common(5):
         percentage = (count / total_logs) * 100 if total_logs > 0 else 0
-        summary += f"{level:<10}{count:>8} ({percentage:>5.1f}%)\n"
+        summary += f"{level:<30}{count:>5} ({percentage:>5.1f}%)\n"
 
     summary += "-" * 30 + "\n"
     summary += f"Total Logs: {total_logs}\n"
 
-    # Full Message Log (First 10 per Level)
-    summary += "\nFull Message Log (First 10 per Level):\n"
-    for level, logs in log_details.items():
-        if logs:
-            summary += f"\n{level}:\n"
-            for idx, log in enumerate(logs[:10]):  # Limit to 10 messages per level
-                summary += f"  {idx + 1:>2}. {log['message']}\n"
+    # Full Message Log (First 3 per Level)
+    summary += "\nDetails for Top Log Types:\n"
+    for level, logs in list(log_details.items())[:3]:  # Limit to 3 log types
+        summary += f"\n{level}:\n"
+        for idx, log in enumerate(logs[:3]):  # Limit to 3 messages per level
+            summary += f"  {idx + 1:>2}. {log['message']}\n"
+        if len(logs) > 3:
+            summary += f"  ... ({len(logs) - 3} more logs)\n"
 
     print(summary)
 
@@ -375,23 +377,18 @@ def parse_linux_logs(log_file):
 import re
 from collections import Counter, defaultdict
 
+
 def parse_mac_logs(log_file):
     """
     Parse Mac logs to extract structured information and counts.
-
-    Args:
-        log_file (str): Path to the Mac log file.
-
-    Returns:
-        tuple: (log_counts, log_details)
-            - log_counts: Counter with counts of each log event.
-            - log_details: Dictionary with segregated details for each log event type.
+    Handles various formats found in macOS logs.
     """
     log_counts = Counter()
     log_details = defaultdict(list)
-    
+
+    # General pattern to match the log format
     log_pattern = re.compile(
-        r"^(?P<date>\w+ \d+ \d{2}:\d{2}:\d{2}) (?P<hostname>[\w.-]+) (?P<process>\S+)\[(?P<pid>\d+)\]: (?P<message>.*)"
+        r"^(?P<date>\w{3} +\d+ \d{2}:\d{2}:\d{2}) (?P<hostname>[\w.-]+) (?P<process>[\w\.\[\]]+)?(?:\[(?P<pid>\d+)\])?: (?P<message>.*)"
     )
 
     try:
@@ -400,16 +397,17 @@ def parse_mac_logs(log_file):
                 match = log_pattern.match(line.strip())
                 if match:
                     data = match.groupdict()
-                    message_summary = data["message"].split(":")[0]  # Take the first part of the message for the event type
-                    log_counts[message_summary] += 1
-                    log_details[message_summary].append({
+                    event_type = data["message"].split(":")[0].strip()  # Use the first part of the message for event type
+                    log_counts[event_type] += 1
+                    log_details[event_type].append({
                         "date": data["date"],
                         "hostname": data["hostname"],
-                        "process": data["process"],
-                        "pid": data["pid"],
+                        "process": data.get("process", "Unknown"),
+                        "pid": data.get("pid", "N/A"),
                         "message": data["message"],
                     })
                 else:
+                    # Log unmatched lines for debugging
                     print(f"Unmatched line: {line.strip()}")
 
     except FileNotFoundError:
@@ -421,6 +419,71 @@ def parse_mac_logs(log_file):
 
     return log_counts, log_details
 
+
+import re
+from collections import Counter, defaultdict
+
+def parse_ssh_logs(log_file):
+    """
+    Parse SSH logs to extract invalid login attempts, break-in attempts, and other relevant events.
+
+    Args:
+        log_file (str): Path to the SSH log file.
+
+    Returns:
+        tuple: (log_counts, log_details)
+            - log_counts: Counter with counts of each log event type.
+            - log_details: Dictionary with segregated details for each log type.
+    """
+    log_counts = Counter()
+    log_details = defaultdict(list)
+
+    # Regex to parse log lines
+    log_pattern = re.compile(
+        r"^(?P<date>\w+ \d+ \d{2}:\d{2}:\d{2}) (?P<hostname>[\w.-]+) (?P<process>\S+): (?P<message>.*)"
+    )
+
+    try:
+        with open(log_file, 'r', encoding='utf-8') as file:
+            for line in file:
+                match = log_pattern.match(line.strip())
+                if match:
+                    data = match.groupdict()
+                    message = data["message"]
+                    
+                    # Categorize the message
+                    if "Invalid user" in message:
+                        event_type = "Invalid user"
+                    elif "authentication failure" in message:
+                        event_type = "Authentication failure"
+                    elif "Failed password" in message:
+                        event_type = "Failed password"
+                    elif "Connection closed" in message:
+                        event_type = "Connection closed"
+                    elif "POSSIBLE BREAK-IN ATTEMPT" in message:
+                        event_type = "Break-in attempt"
+                    else:
+                        event_type = "Other"
+
+                    # Increment count and store details
+                    log_counts[event_type] += 1
+                    log_details[event_type].append({
+                        "date": data["date"],
+                        "hostname": data["hostname"],
+                        "process": data["process"],
+                        "message": message,
+                    })
+                else:
+                    print(f"Unmatched line: {line.strip()}")  # Debug unmatched lines
+
+    except FileNotFoundError:
+        print(f"Log file not found: {log_file}")
+        return None, None
+    except Exception as e:
+        print(f"Error reading log file: {e}")
+        return None, None
+
+    return log_counts, log_details
 
 
 def determine_log_path(config, dataset):
@@ -455,7 +518,8 @@ def determine_log_path(config, dataset):
         log_file = os.path.join(base_dir, "Linux", "Linux_2k.log")
     elif dataset.lower() == "mac":
         log_file = os.path.join(base_dir, "Mac", "Mac_2k.log")
-    
+    elif dataset.lower() == "ssh":
+        log_file = os.path.join(base_dir, "OpenSSH", "OpenSSH_2k.log")    
 
     else:
         log_file = os.path.join(base_dir, dataset, f"{dataset}_2k.log")
@@ -503,7 +567,8 @@ def main():
         log_counts, log_details = parse_linux_logs(log_file)
     elif args.dataset.lower() == "mac":
         log_counts, log_details = parse_mac_logs(log_file)
-
+    elif args.dataset.lower() == "ssh":
+        log_counts, log_details = parse_mac_logs(log_file)
     else:
         print(f"Dataset {args.dataset} not supported.")
         return
