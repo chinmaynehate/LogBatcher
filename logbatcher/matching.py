@@ -1,4 +1,5 @@
 import re
+import threading
 from logbatcher.cluster import Cluster
 
 import signal
@@ -9,18 +10,25 @@ class TimeoutException(Exception):
 def timeout_handler(signum, frame):
     raise TimeoutException()
 
-def safe_search(pattern, string, timeout=0.5):
-    # 设置超时信号
-    signal.signal(signal.SIGALRM, timeout_handler)
-    signal.alarm(timeout)
-    try:
-        result = re.search(pattern, string)
-    except TimeoutException:
-        result = None
-    finally:
-        signal.alarm(0)  # 取消超时
-    return result
+def safe_search(regex, log, timeout):
+    """
+    Perform a regex search with a timeout using threading.
+    """
+    result = None
 
+    def search():
+        nonlocal result
+        result = re.search(regex, log)
+
+    # Create a thread for the search
+    thread = threading.Thread(target=search)
+    thread.start()
+    thread.join(timeout)  # Wait for the thread to complete or timeout
+
+    if thread.is_alive():
+        raise TimeoutError("Regex search timed out")
+
+    return result
 
 # @timeout(10)
 def extract_variables(log, template):

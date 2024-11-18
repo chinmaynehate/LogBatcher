@@ -15,7 +15,7 @@ if __name__ == '__main__':
 
     # load contents from raw log file, structured log file or content list
     contents = data_loader(
-        file_name=f"datasets/loghub-2k/{dataset}/{dataset}_2k.log",
+        file_name=f"datasets\loghub-2k\Apache\Apache_2k.log",
         dataset_format= config['datasets_format'][dataset],
         file_format ='raw'
     )
