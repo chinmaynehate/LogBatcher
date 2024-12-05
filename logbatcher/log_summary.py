@@ -419,10 +419,6 @@ def parse_mac_logs(log_file):
 
     return log_counts, log_details
 
-
-import re
-from collections import Counter, defaultdict
-
 def parse_ssh_logs(log_file):
     """
     Parse SSH logs to extract invalid login attempts, break-in attempts, and other relevant events.
@@ -565,7 +561,7 @@ def main():
         log_counts, log_details = parse_hpc_logs(log_file)
     elif args.dataset.lower() == "linux":
         log_counts, log_details = parse_linux_logs(log_file)
-    elif args.dataset.lower() == "mac":
+    elif args.dataset.lower() == "mac": 
         log_counts, log_details = parse_mac_logs(log_file)
     elif args.dataset.lower() == "ssh":
         log_counts, log_details = parse_mac_logs(log_file)

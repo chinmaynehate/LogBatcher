@@ -1,0 +1,5 @@
+# Configuration for Frequent Error Tagging System
+
+# Number of occurrences of an error to consider it high-priority
+tagging_threshold: 10
+
