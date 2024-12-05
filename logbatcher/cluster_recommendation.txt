@@ -1,0 +1,82 @@
+Top Three Clustering Methods per Dataset:
+
+Dataset: Zookeeper_2k
+  Method: HDBSCAN, Silhouette Score: 0.9696
+  Method: DBSCAN, Silhouette Score: 0.9676
+  Method: OPTICS, Silhouette Score: 0.9676
+
+Dataset: Proxifier_2k
+  Method: OPTICS, Silhouette Score: 0.6423
+  Method: DBSCAN, Silhouette Score: 0.6102
+  Method: HDBSCAN, Silhouette Score: 0.5998
+
+Dataset: HealthApp_2k
+  Method: DBSCAN, Silhouette Score: 0.9604
+  Method: OPTICS, Silhouette Score: 0.9604
+  Method: HDBSCAN, Silhouette Score: 0.9462
+
+Dataset: OpenSSH_2k
+  Method: DBSCAN, Silhouette Score: 0.8570
+  Method: OPTICS, Silhouette Score: 0.8531
+  Method: HDBSCAN, Silhouette Score: 0.8457
+
+Dataset: Mac_2k
+  Method: HDBSCAN, Silhouette Score: 0.7314
+  Method: OPTICS, Silhouette Score: 0.7165
+  Method: DBSCAN, Silhouette Score: 0.6960
+
+Dataset: Windows_2k
+  Method: HDBSCAN, Silhouette Score: 0.9660
+  Method: Agglomerative, Silhouette Score: 0.9636
+  Method: DBSCAN, Silhouette Score: 0.9607
+
+Dataset: Linux_2k
+  Method: HDBSCAN, Silhouette Score: 0.9390
+  Method: OPTICS, Silhouette Score: 0.9372
+  Method: DBSCAN, Silhouette Score: 0.9313
+
+Dataset: Android_2k
+  Method: HDBSCAN, Silhouette Score: 0.9001
+  Method: DBSCAN, Silhouette Score: 0.8939
+  Method: OPTICS, Silhouette Score: 0.8939
+
+Dataset: Apache_2k
+  Method: DBSCAN, Silhouette Score: 0.9995
+  Method: OPTICS, Silhouette Score: 0.9994
+  Method: HDBSCAN, Silhouette Score: 0.9994
+
+Dataset: BGL_2k
+  Method: OPTICS, Silhouette Score: 0.9176
+  Method: HDBSCAN, Silhouette Score: 0.9119
+  Method: DBSCAN, Silhouette Score: 0.9100
+
+Dataset: Hadoop_2k
+  Method: HDBSCAN, Silhouette Score: 0.9306
+  Method: OPTICS, Silhouette Score: 0.9298
+  Method: DBSCAN, Silhouette Score: 0.9286
+
+Dataset: Spark_2k
+  Method: DBSCAN, Silhouette Score: 0.9877
+  Method: OPTICS, Silhouette Score: 0.9877
+  Method: HDBSCAN, Silhouette Score: 0.9846
+
+Dataset: OpenStack_2k
+  Method: DBSCAN, Silhouette Score: 0.9970
+  Method: OPTICS, Silhouette Score: 0.9970
+  Method: HDBSCAN, Silhouette Score: 0.9962
+
+Dataset: HPC_2k
+  Method: OPTICS, Silhouette Score: 0.9678
+  Method: HDBSCAN, Silhouette Score: 0.9651
+  Method: DBSCAN, Silhouette Score: 0.9651
+
+Dataset: HDFS_2k
+  Method: DBSCAN, Silhouette Score: 0.9954
+  Method: OPTICS, Silhouette Score: 0.9954
+  Method: HDBSCAN, Silhouette Score: 0.9934
+
+Dataset: Thunderbird_2k
+  Method: DBSCAN, Silhouette Score: 0.8927
+  Method: OPTICS, Silhouette Score: 0.8927
+  Method: HDBSCAN, Silhouette Score: 0.8876
+
