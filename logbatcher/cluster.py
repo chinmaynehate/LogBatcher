@@ -49,6 +49,29 @@ class Cluster:
         return
 
 def tokenize(log_content, tokenize_pattern=r'[ ,|]', removeDight=True):
+    """
+    Tokenize log messages, replacing various patterns with placeholders.
+    
+    The function:
+    - Replaces dates, IPs, URLs, log levels, hex values, and numbers with special tokens.
+    - Splits the log message by delimiters (spaces, commas, pipes).
+    - Attempts to preserve token position ordering.
+    - Filters out certain tokens (like digits if removeDight=True).
+    
+    Parameters
+    ----------
+    log_content : str
+        The raw log message.
+    tokenize_pattern : str, optional
+        Regex pattern to split the log, by default r'[ ,|]'.
+    removeDight : bool, optional
+        If True, remove tokens containing digits (except replaced placeholders), by default True.
+
+    Returns
+    -------
+    list of str
+        A list of tokens representing the processed log message.
+    """
     # Enhanced patterns
     log_content = re.sub(
         r'\d{2,4}[-/:]\d{1,2}[-/:]\d{1,4}(?:[ T]\d{2}:\d{2}:\d{2}(?:\.\d+)?)?',
@@ -87,6 +110,19 @@ def tokenize(log_content, tokenize_pattern=r'[ ,|]', removeDight=True):
 
 
 def vectorize(tokenized_logs):
+    """
+    Vectorize tokenized logs using TF-IDF and then normalize the resulting vectors.
+    
+    Parameters
+    ----------
+    tokenized_logs : list of list of str
+        Each element is a tokenized log message.
+
+    Returns
+    -------
+    sparse matrix
+        A normalized TF-IDF matrix representing the log corpus.
+    """
     vectorizer = TfidfVectorizer(
         tokenizer=lambda x: x,
         preprocessor=lambda x: x,
@@ -161,6 +197,23 @@ def optics_clustering(vectorized_logs, min_samples=5):
     return labels
 
 def consensus_clustering(cluster_labels_list):
+    """
+    Combine cluster assignments from multiple clustering algorithms to form a consensus.
+
+    The consensus is formed by taking the mode (most common cluster label)
+    among the arrays of labels for each data point. If ties occur or a point is noise
+    (-1), assign a new unique label.
+
+    Parameters
+    ----------
+    cluster_labels_list : list of np.ndarray
+        A list of label arrays from different clustering algorithms, all of the same length.
+
+    Returns
+    -------
+    np.ndarray
+        The consensus cluster labels.
+    """
     from scipy.stats import mode
     labels_array = np.array(cluster_labels_list).T
     consensus_labels, counts = mode(labels_array, axis=1, nan_policy='omit')
@@ -175,20 +228,48 @@ def consensus_clustering(cluster_labels_list):
     return consensus_labels.astype(int)
 
 def relabel_clusters(labels):
+    """
+    Relabel clusters so that they form a consecutive integer sequence starting from 0.
+
+    Parameters
+    ----------
+    labels : np.ndarray
+        Array of labels that may have arbitrary integers.
+
+    Returns
+    -------
+    np.ndarray
+        Labels remapped to consecutive integers.
+    """
     unique_labels = np.unique(labels)
     label_mapping = {old_label: new_label for new_label, old_label in enumerate(unique_labels)}
     new_labels = np.array([label_mapping[label] for label in labels])
     return new_labels
 
 
-def cluster(vectorized_logs, eps=0.1):
-    cluster = DBSCAN(eps=eps, min_samples=5)
-    cluster.fit(vectorized_logs)
-    labels = cluster.labels_
-    cluster_nums = max(labels) + 1
-    return labels, cluster_nums
-
 def cluster(vectorized_logs, min_samples=5):
+    """
+    Perform clustering using DBSCAN, HDBSCAN, and OPTICS, then do consensus clustering.
+
+    Steps:
+    1. Optimize eps for DBSCAN using silhouette-based search.
+    2. Run DBSCAN with the chosen eps.
+    3. Run HDBSCAN and OPTICS.
+    4. Combine results using consensus clustering.
+    5. Relabel clusters and return.
+
+    Parameters
+    ----------
+    vectorized_logs : sparse or dense array
+        The vectorized log data.
+    min_samples : int, optional
+        Minimum samples for DBSCAN and other density-based methods, by default 5.
+
+    Returns
+    -------
+    tuple
+        (labels, cluster_nums) where labels are the consensus cluster labels and cluster_nums is the number of clusters formed.
+    """
     # Use silhouette-based optimization for DBSCAN eps
     best_eps = optimize_eps_for_dbscan(vectorized_logs, min_samples=min_samples)
     labels_dbscan = dbscan_clustering(vectorized_logs, best_eps, min_samples=min_samples)
@@ -203,6 +284,27 @@ def cluster(vectorized_logs, min_samples=5):
     
 
 def reassign_clusters(labels, cluster_nums, tokenized_logs):
+    """
+    Reassign clusters to handle noise points that are identical. 
+    Points that were noise (-1) and share the same textual log content
+    get grouped into new unique cluster IDs.
+
+    After reassigning, relabel clusters to ensure a consecutive numbering.
+
+    Parameters
+    ----------
+    labels : np.ndarray
+        Current cluster labels.
+    cluster_nums : int
+        Number of clusters currently known.
+    tokenized_logs : list of list of str
+        The tokenized logs corresponding to the labels.
+
+    Returns
+    -------
+    tuple
+        (labels, cluster_nums) after reassigning and relabeling.
+    """
     merged_logs = []
     for tokenized_log in tokenized_logs:
         merged_logs.append(' '.join(tokenized_log))

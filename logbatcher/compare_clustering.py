@@ -1,3 +1,19 @@
+"""
+This module compares various clustering algorithms (DBSCAN, OPTICS, HDBSCAN, KMeans, Agglomerative, GMM)
+on log data. It tokenizes and vectorizes the logs, optimizes parameters like eps for DBSCAN,
+estimates the number of clusters for some algorithms, and evaluates clustering quality using
+Silhouette Score and other metrics. Finally, it ranks the methods and visualizes the results.
+
+Algorithms included:
+- DBSCAN (density-based, requires eps optimization)
+- OPTICS (density-based, parameter max_eps chosen by DBSCAN's best eps)
+- HDBSCAN (density-based, hierarchical, no preset number of clusters)
+- KMeans (centroid-based, requires a chosen number of clusters)
+- Agglomerative Clustering (hierarchical, requires a chosen number of clusters)
+- GMM (Gaussian Mixture Model, probabilistic, requires a chosen number of clusters)
+
+The results are saved in a .txt file and a PNG plot for metrics. Visualization of clusters is also provided.
+"""
 import os
 import re
 import numpy as np
@@ -34,6 +50,30 @@ if not os.path.exists('compare_plots'):
     os.makedirs('compare_plots')
 
 def tokenize(log_content, tokenize_pattern=r'[ ,|]', removeDight=True):
+    """
+    Tokenize and preprocess a single log message.
+
+    This function:
+    1. Replaces various patterns (dates, IPs, URLs, log levels, hex, numbers) in the log
+       with placeholder tokens (e.g., <DATE_TIME>, <IP>, <URL>, <LEVEL>, <HEX>, <NUM>).
+    2. Splits the log based on a given regex pattern.
+    3. Optionally removes tokens containing digits if removeDight=True.
+    4. Preserves token order by using positional indexing.
+    
+    Parameters
+    ----------
+    log_content : str
+        The raw log message.
+    tokenize_pattern : str, optional
+        Regex pattern to split the log into tokens, by default r'[ ,|]'.
+    removeDight : bool, optional
+        If True, remove tokens containing digits. By default True.
+
+    Returns
+    -------
+    list of str
+        A list of tokens representing the processed log message.
+    """
     # Enhanced patterns
     log_content = re.sub(
         r'\d{2,4}[-/:]\d{1,2}[-/:]\d{1,4}(?:[ T]\d{2}:\d{2}:\d{2}(?:\.\d+)?)?',
@@ -72,6 +112,19 @@ def tokenize(log_content, tokenize_pattern=r'[ ,|]', removeDight=True):
 
 
 def vectorize(tokenized_logs):
+    """
+    Vectorize tokenized logs using TF-IDF and normalize the resulting vectors.
+
+    Parameters
+    ----------
+    tokenized_logs : list of list of str
+        Each element is the tokenized form of a log message.
+
+    Returns
+    -------
+    scipy.sparse matrix
+        A normalized TF-IDF sparse matrix representing the log corpus.
+    """
     vectorizer = TfidfVectorizer(
         tokenizer=lambda x: x,
         preprocessor=lambda x: x,
@@ -161,9 +214,28 @@ def estimate_n_clusters(vectorized_logs, max_clusters=50):
 
 def compare_clustering_methods(vectorized_logs, dataset_name='Dataset', min_samples=5):
     """
-    Compare different clustering methods and their performance.
-    Implements Silhouette Score optimization for DBSCAN (eps) only.
-    OPTICS does not get eps optimization to reduce runtime.
+    Compare multiple clustering algorithms on the given dataset and rank them by Silhouette Score.
+
+    Algorithms: DBSCAN, OPTICS, HDBSCAN, KMeans, Agglomerative, GMM.
+    - DBSCAN eps optimized by Silhouette Score.
+    - OPTICS uses DBSCAN's best eps for max_eps.
+    - HDBSCAN does not need a cluster count.
+    - KMeans, Agglomerative, GMM need estimated cluster count.
+    - Results are saved and a visualization is produced.
+
+    Parameters
+    ----------
+    vectorized_logs : scipy.sparse matrix or np.ndarray
+        Vectorized log data.
+    dataset_name : str
+        Name of the dataset for output file naming.
+    min_samples : int, optional
+        Parameter for DBSCAN/HDBSCAN/OPTICS, by default 5.
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame with each method's clustering metrics and results.
     """
     from sklearn.metrics import silhouette_score, calinski_harabasz_score, davies_bouldin_score
     import time
