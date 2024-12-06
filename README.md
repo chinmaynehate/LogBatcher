@@ -264,3 +264,44 @@ The description of the arguments:
 --dataset
   To evaluate on a single dataset, default: 'null'.
 ```
+
+# Log Processing and Analysis Tool
+
+This project provides tools for parsing, analyzing, and summarizing log files across multiple datasets. It supports two primary functionalities: frequent error tagging and generating log summaries for datasets.
+
+## Table of Contents
+
+1. [Features](#features)
+2. [Setup Instructions](#setup-instructions)
+3. [User Stories](#user-stories)
+    - [Frequent Error Tagging](#frequent-error-tagging)
+    - [Generate Log Summaries for Datasets](#generate-log-summaries-for-datasets)
+4. [Examples](#examples)
+5. [Contributing](#contributing)
+
+---
+
+## Features
+
+- Supports parsing logs from multiple datasets (e.g., Android, Apache, Hadoop, etc.).
+- Tags and prioritizes frequent errors based on occurrence thresholds.
+- Generates detailed summaries for all logs with error counts and examples.
+- Processes all datasets at once or individual datasets based on user input.
+- Outputs results to specified directories for easy access.
+
+---
+
+## Setup Instructions:
+
+### Prerequisites
+- Python 3.7 or later
+- Required Python libraries:
+  - `argparse`
+  - `collections`
+  - `os`
+  - `re`
+
+To install dependencies, run:
+
+```bash
+pip install -r requirements.txt
