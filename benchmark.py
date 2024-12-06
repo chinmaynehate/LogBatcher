@@ -66,6 +66,7 @@ if __name__ == "__main__":
         df = pd.read_csv(structured_log_file)
         logs = df['Content'].tolist()
 
+
         single_dataset_paring(
             dataset=dataset,
             contents=logs,
