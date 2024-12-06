@@ -22,7 +22,7 @@ except ImportError:
 
 
 class Parser:
-    def _init_(self, model, theme, config):
+    def __init__(self, model, theme, config):
         """
         Initialize the Parser class.
         :param model: Model name to use (e.g., 'mistral', 'gpt-3.5-turbo', etc.).
