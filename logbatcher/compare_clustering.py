@@ -4,7 +4,8 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')  # Use non-interactive backend
 import matplotlib.pyplot as plt
-
+from sklearn.mixture import GaussianMixture
+from sklearn.exceptions import ConvergenceWarning
 import pandas as pd
 import time
 import warnings
@@ -119,6 +120,44 @@ def optimize_eps_for_dbscan(vectorized_logs, min_samples=5):
 
     return best_eps
 
+def estimate_n_clusters(vectorized_logs, max_clusters=50):
+    """
+    Estimate optimal number of clusters using the elbow method
+    and dataset characteristics.
+    """
+    n_samples = vectorized_logs.shape[0]
+    
+    # For very small datasets
+    if n_samples < 100:
+        return min(int(np.sqrt(n_samples)), max_clusters)
+        
+    # For larger datasets, use elbow method with sample
+    sample_size = min(1000, n_samples)  # Cap sample size for efficiency
+    if sparse.issparse(vectorized_logs):
+        sample_data = vectorized_logs[:sample_size].toarray()
+    else:
+        sample_data = vectorized_logs[:sample_size]
+
+    distortions = []
+    K = range(2, min(20, max_clusters))
+    
+    for k in K:
+        kmeans = KMeans(n_clusters=k, random_state=42, n_init=2)
+        kmeans.fit(sample_data)
+        distortions.append(kmeans.inertia_)
+    
+    # Find elbow point using differences
+    diffs = np.diff(distortions)
+    elbow_idx = np.argmax(diffs) + 2  # Add 2 because we started from K=2
+    
+    # Apply constraints
+    optimal_k = min(
+        max(elbow_idx, 2),  # At least 2 clusters
+        int(np.sqrt(n_samples/2)),  # Rule of thumb upper bound
+        max_clusters  # Hard upper limit
+    )
+    
+    return optimal_k
 
 def compare_clustering_methods(vectorized_logs, dataset_name='Dataset', min_samples=5):
     """
@@ -141,14 +180,15 @@ def compare_clustering_methods(vectorized_logs, dataset_name='Dataset', min_samp
     # For OPTICS, we will just pick a default max_eps or rely on the default
     # This avoids the time-consuming eps search for OPTICS
     default_max_eps_optics = 0.5
-
+    n_clusters = estimate_n_clusters(vectorized_logs)
     # Define clustering methods with the chosen eps parameters
     clustering_methods = {
         'DBSCAN': DBSCAN(eps=best_eps_dbscan, min_samples=min_samples, metric='euclidean', n_jobs=-1),
-        'OPTICS': OPTICS(min_samples=min_samples, metric='euclidean', max_eps=default_max_eps_optics, n_jobs=-1),
+        'OPTICS': OPTICS(min_samples=min_samples, metric='euclidean', max_eps=best_eps_dbscan, n_jobs=-1),
         'HDBSCAN': hdbscan.HDBSCAN(min_cluster_size=min_samples, metric='euclidean'),
-        'KMeans': KMeans(n_clusters=10, random_state=42, n_init='auto'),
-        'Agglomerative': AgglomerativeClustering(n_clusters=10),
+        'KMeans': KMeans(n_clusters=n_clusters, random_state=42, n_init='auto'),
+        'Agglomerative': AgglomerativeClustering(n_clusters=n_clusters),
+        'GMM': GaussianMixture(n_components=n_clusters, random_state=42)
     }
 
     results = []
@@ -298,21 +338,23 @@ def process_all_datasets(datasets_dir='../datasets/loghub-2k'):
             # Compare clustering methods
             comparison_results = compare_clustering_methods(tfidf_matrix, dataset_name=dataset_name)
 
-            # Get top three methods based on Silhouette Score
-            top_methods = comparison_results.nlargest(3, 'Silhouette Score')
+            # Rank all methods by Silhouette Score
+            ranked_results = comparison_results.sort_values('Silhouette Score', ascending=False)
+            ranked_results['Rank'] = range(1, len(ranked_results) + 1)
+
+            # Store all methods with ranks
             recommendations.append({
                 'Dataset': dataset_name,
-                'Top Methods': top_methods['Method'].tolist(),
-                'Silhouette Scores': top_methods['Silhouette Score'].tolist()
+                'Ranked Methods': ranked_results[['Rank', 'Method', 'Silhouette Score']].values.tolist()
             })
 
-    # Write recommendations to file
+    # Write recommendations to file, showing all methods with their rank
     with open('cluster_recommendation.txt', 'w') as f:
-        f.write("Top Three Clustering Methods per Dataset:\n\n")
+        f.write("Ranked Methods per Dataset:\n\n")
         for rec in recommendations:
             f.write(f"Dataset: {rec['Dataset']}\n")
-            for method, score in zip(rec['Top Methods'], rec['Silhouette Scores']):
-                f.write(f"  Method: {method}, Silhouette Score: {score:.4f}\n")
+            for rank, method, score in rec['Ranked Methods']:
+                f.write(f"  Rank: {rank}, Method: {method}, Silhouette Score: {score:.4f}\n")
             f.write("\n")
 
     print("\nCluster recommendations saved to 'cluster_recommendation.txt'")

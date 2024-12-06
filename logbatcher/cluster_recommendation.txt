@@ -1,82 +1,130 @@
-Top Three Clustering Methods per Dataset:
+Ranked Methods per Dataset:
 
 Dataset: Zookeeper_2k
-  Method: HDBSCAN, Silhouette Score: 0.9696
-  Method: DBSCAN, Silhouette Score: 0.9676
-  Method: OPTICS, Silhouette Score: 0.9676
+  Rank: 1, Method: HDBSCAN, Silhouette Score: 0.9696
+  Rank: 2, Method: DBSCAN, Silhouette Score: 0.9676
+  Rank: 3, Method: OPTICS, Silhouette Score: 0.9676
+  Rank: 4, Method: Agglomerative, Silhouette Score: 0.9606
+  Rank: 5, Method: KMeans, Silhouette Score: 0.9485
+  Rank: 6, Method: GMM, Silhouette Score: 0.9485
 
 Dataset: Proxifier_2k
-  Method: OPTICS, Silhouette Score: 0.6423
-  Method: DBSCAN, Silhouette Score: 0.6102
-  Method: HDBSCAN, Silhouette Score: 0.5998
+  Rank: 1, Method: DBSCAN, Silhouette Score: 0.6102
+  Rank: 2, Method: OPTICS, Silhouette Score: 0.6102
+  Rank: 3, Method: HDBSCAN, Silhouette Score: 0.5998
+  Rank: 4, Method: Agglomerative, Silhouette Score: 0.3761
+  Rank: 5, Method: KMeans, Silhouette Score: 0.3188
+  Rank: 6, Method: GMM, Silhouette Score: 0.3188
 
 Dataset: HealthApp_2k
-  Method: DBSCAN, Silhouette Score: 0.9604
-  Method: OPTICS, Silhouette Score: 0.9604
-  Method: HDBSCAN, Silhouette Score: 0.9462
+  Rank: 1, Method: DBSCAN, Silhouette Score: 0.9604
+  Rank: 2, Method: OPTICS, Silhouette Score: 0.9604
+  Rank: 3, Method: HDBSCAN, Silhouette Score: 0.9462
+  Rank: 4, Method: Agglomerative, Silhouette Score: 0.9416
+  Rank: 5, Method: KMeans, Silhouette Score: 0.9278
+  Rank: 6, Method: GMM, Silhouette Score: 0.9278
 
 Dataset: OpenSSH_2k
-  Method: DBSCAN, Silhouette Score: 0.8570
-  Method: OPTICS, Silhouette Score: 0.8531
-  Method: HDBSCAN, Silhouette Score: 0.8457
+  Rank: 1, Method: DBSCAN, Silhouette Score: 0.8570
+  Rank: 2, Method: OPTICS, Silhouette Score: 0.8531
+  Rank: 3, Method: HDBSCAN, Silhouette Score: 0.8457
+  Rank: 4, Method: Agglomerative, Silhouette Score: 0.8255
+  Rank: 5, Method: KMeans, Silhouette Score: 0.7996
+  Rank: 6, Method: GMM, Silhouette Score: 0.7996
 
 Dataset: Mac_2k
-  Method: HDBSCAN, Silhouette Score: 0.7314
-  Method: OPTICS, Silhouette Score: 0.7165
-  Method: DBSCAN, Silhouette Score: 0.6960
+  Rank: 1, Method: HDBSCAN, Silhouette Score: 0.7314
+  Rank: 2, Method: OPTICS, Silhouette Score: 0.7032
+  Rank: 3, Method: DBSCAN, Silhouette Score: 0.6960
+  Rank: 4, Method: Agglomerative, Silhouette Score: 0.2519
+  Rank: 5, Method: KMeans, Silhouette Score: 0.2139
+  Rank: 6, Method: GMM, Silhouette Score: 0.2139
 
 Dataset: Windows_2k
-  Method: HDBSCAN, Silhouette Score: 0.9660
-  Method: Agglomerative, Silhouette Score: 0.9636
-  Method: DBSCAN, Silhouette Score: 0.9607
+  Rank: 1, Method: Agglomerative, Silhouette Score: 0.9711
+  Rank: 2, Method: KMeans, Silhouette Score: 0.9698
+  Rank: 3, Method: GMM, Silhouette Score: 0.9698
+  Rank: 4, Method: HDBSCAN, Silhouette Score: 0.9660
+  Rank: 5, Method: OPTICS, Silhouette Score: 0.9607
+  Rank: 6, Method: DBSCAN, Silhouette Score: 0.9607
 
 Dataset: Linux_2k
-  Method: HDBSCAN, Silhouette Score: 0.9390
-  Method: OPTICS, Silhouette Score: 0.9372
-  Method: DBSCAN, Silhouette Score: 0.9313
+  Rank: 1, Method: HDBSCAN, Silhouette Score: 0.9390
+  Rank: 2, Method: DBSCAN, Silhouette Score: 0.9313
+  Rank: 3, Method: OPTICS, Silhouette Score: 0.9313
+  Rank: 4, Method: Agglomerative, Silhouette Score: 0.6573
+  Rank: 5, Method: KMeans, Silhouette Score: 0.5742
+  Rank: 6, Method: GMM, Silhouette Score: 0.5742
 
 Dataset: Android_2k
-  Method: HDBSCAN, Silhouette Score: 0.9001
-  Method: DBSCAN, Silhouette Score: 0.8939
-  Method: OPTICS, Silhouette Score: 0.8939
+  Rank: 1, Method: HDBSCAN, Silhouette Score: 0.9001
+  Rank: 2, Method: DBSCAN, Silhouette Score: 0.8939
+  Rank: 3, Method: OPTICS, Silhouette Score: 0.8939
+  Rank: 4, Method: Agglomerative, Silhouette Score: 0.6324
+  Rank: 5, Method: KMeans, Silhouette Score: 0.5386
+  Rank: 6, Method: GMM, Silhouette Score: 0.5386
 
 Dataset: Apache_2k
-  Method: DBSCAN, Silhouette Score: 0.9995
-  Method: OPTICS, Silhouette Score: 0.9994
-  Method: HDBSCAN, Silhouette Score: 0.9994
+  Rank: 1, Method: DBSCAN, Silhouette Score: 0.9995
+  Rank: 2, Method: OPTICS, Silhouette Score: 0.9995
+  Rank: 3, Method: KMeans, Silhouette Score: 0.9995
+  Rank: 4, Method: GMM, Silhouette Score: 0.9995
+  Rank: 5, Method: HDBSCAN, Silhouette Score: 0.9994
+  Rank: 6, Method: Agglomerative, Silhouette Score: 0.9965
 
 Dataset: BGL_2k
-  Method: OPTICS, Silhouette Score: 0.9176
-  Method: HDBSCAN, Silhouette Score: 0.9119
-  Method: DBSCAN, Silhouette Score: 0.9100
+  Rank: 1, Method: OPTICS, Silhouette Score: 0.9176
+  Rank: 2, Method: HDBSCAN, Silhouette Score: 0.9119
+  Rank: 3, Method: DBSCAN, Silhouette Score: 0.9100
+  Rank: 4, Method: Agglomerative, Silhouette Score: 0.8108
+  Rank: 5, Method: KMeans, Silhouette Score: 0.7810
+  Rank: 6, Method: GMM, Silhouette Score: 0.7810
 
 Dataset: Hadoop_2k
-  Method: HDBSCAN, Silhouette Score: 0.9306
-  Method: OPTICS, Silhouette Score: 0.9298
-  Method: DBSCAN, Silhouette Score: 0.9286
+  Rank: 1, Method: HDBSCAN, Silhouette Score: 0.9306
+  Rank: 2, Method: DBSCAN, Silhouette Score: 0.9286
+  Rank: 3, Method: OPTICS, Silhouette Score: 0.9286
+  Rank: 4, Method: Agglomerative, Silhouette Score: 0.8824
+  Rank: 5, Method: KMeans, Silhouette Score: 0.8723
+  Rank: 6, Method: GMM, Silhouette Score: 0.8723
 
 Dataset: Spark_2k
-  Method: DBSCAN, Silhouette Score: 0.9877
-  Method: OPTICS, Silhouette Score: 0.9877
-  Method: HDBSCAN, Silhouette Score: 0.9846
+  Rank: 1, Method: DBSCAN, Silhouette Score: 0.9877
+  Rank: 2, Method: OPTICS, Silhouette Score: 0.9877
+  Rank: 3, Method: HDBSCAN, Silhouette Score: 0.9846
+  Rank: 4, Method: Agglomerative, Silhouette Score: 0.9836
+  Rank: 5, Method: KMeans, Silhouette Score: 0.9833
+  Rank: 6, Method: GMM, Silhouette Score: 0.9833
 
 Dataset: OpenStack_2k
-  Method: DBSCAN, Silhouette Score: 0.9970
-  Method: OPTICS, Silhouette Score: 0.9970
-  Method: HDBSCAN, Silhouette Score: 0.9962
+  Rank: 1, Method: DBSCAN, Silhouette Score: 0.9970
+  Rank: 2, Method: OPTICS, Silhouette Score: 0.9970
+  Rank: 3, Method: HDBSCAN, Silhouette Score: 0.9962
+  Rank: 4, Method: Agglomerative, Silhouette Score: 0.6867
+  Rank: 5, Method: KMeans, Silhouette Score: 0.6005
+  Rank: 6, Method: GMM, Silhouette Score: 0.6005
 
 Dataset: HPC_2k
-  Method: OPTICS, Silhouette Score: 0.9678
-  Method: HDBSCAN, Silhouette Score: 0.9651
-  Method: DBSCAN, Silhouette Score: 0.9651
+  Rank: 1, Method: HDBSCAN, Silhouette Score: 0.9651
+  Rank: 2, Method: DBSCAN, Silhouette Score: 0.9651
+  Rank: 3, Method: OPTICS, Silhouette Score: 0.9651
+  Rank: 4, Method: Agglomerative, Silhouette Score: 0.9019
+  Rank: 5, Method: KMeans, Silhouette Score: 0.8925
+  Rank: 6, Method: GMM, Silhouette Score: 0.8925
 
 Dataset: HDFS_2k
-  Method: DBSCAN, Silhouette Score: 0.9954
-  Method: OPTICS, Silhouette Score: 0.9954
-  Method: HDBSCAN, Silhouette Score: 0.9934
+  Rank: 1, Method: Agglomerative, Silhouette Score: 0.9961
+  Rank: 2, Method: KMeans, Silhouette Score: 0.9961
+  Rank: 3, Method: GMM, Silhouette Score: 0.9961
+  Rank: 4, Method: DBSCAN, Silhouette Score: 0.9954
+  Rank: 5, Method: OPTICS, Silhouette Score: 0.9954
+  Rank: 6, Method: HDBSCAN, Silhouette Score: 0.9934
 
 Dataset: Thunderbird_2k
-  Method: DBSCAN, Silhouette Score: 0.8927
-  Method: OPTICS, Silhouette Score: 0.8927
-  Method: HDBSCAN, Silhouette Score: 0.8876
+  Rank: 1, Method: DBSCAN, Silhouette Score: 0.8927
+  Rank: 2, Method: OPTICS, Silhouette Score: 0.8927
+  Rank: 3, Method: HDBSCAN, Silhouette Score: 0.8876
+  Rank: 4, Method: Agglomerative, Silhouette Score: 0.8546
+  Rank: 5, Method: KMeans, Silhouette Score: 0.8491
+  Rank: 6, Method: GMM, Silhouette Score: 0.8491
 
