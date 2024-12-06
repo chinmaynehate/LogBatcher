@@ -22,7 +22,7 @@ def test_basic():
     try:
         parser = Parser("gpt-3.5-turbo-0125", "test", config)
     except ValueError as e:
-        assert str(e) == "Please provide your OpenAI API key and Together API key in the config.json file."
+        assert str(e) == "Please provide your OpenAI and Together API keys in the config.json file."
 
     contents = data_loader(
         file_name=f"datasets/loghub-2k/{dataset}/{dataset}_2k.log",
