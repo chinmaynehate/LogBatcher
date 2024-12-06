@@ -356,6 +356,10 @@ def visualize_clusters(vectorized_logs_dense, all_labels, dataset_name):
     """
     Visualize clusters using PCA for dimensionality reduction.
     """
+    num_samples, num_features = vectorized_logs_dense.shape
+    if num_samples < 2:
+        print("Not enough samples for PCA visualization. Skipping.")
+        return
     pca = PCA(n_components=2)
     coords = pca.fit_transform(vectorized_logs_dense)
 
